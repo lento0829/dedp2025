@@ -1,4 +1,5 @@
 import os
+import urllib.parse
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -13,8 +14,13 @@ class Config(object):
     SQL_DATABASE = os.environ.get('SQL_DATABASE') or 'ENTER_SQL_DB_NAME'
     SQL_USER_NAME = os.environ.get('SQL_USER_NAME') or 'ENTER_SQL_SERVER_USERNAME'
     SQL_PASSWORD = os.environ.get('SQL_PASSWORD') or 'ENTER_SQL_SERVER_PASSWORD'
-    # Below URI may need some adjustments for driver version, based on your OS, if running locally
-    SQLALCHEMY_DATABASE_URI = 'mssql+pyodbc://' + SQL_USER_NAME + '@' + SQL_SERVER + ':' + SQL_PASSWORD + '@' + SQL_SERVER + ':1433/' + SQL_DATABASE  + '?driver=ODBC+Driver+17+for+SQL+Server'
+    # Build a robust ODBC connection string and URL-encode it to safely handle special characters
+    _odbc_str = (
+        "DRIVER={ODBC Driver 17 for SQL Server};"
+        f"SERVER={SQL_SERVER};DATABASE={SQL_DATABASE};"
+        f"UID={SQL_USER_NAME};PWD={SQL_PASSWORD}"
+    )
+    SQLALCHEMY_DATABASE_URI = "mssql+pyodbc:///?odbc_connect=" + urllib.parse.quote_plus(_odbc_str)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     ### Info for MS Authentication ###
