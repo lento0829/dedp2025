@@ -4,7 +4,7 @@ Routes and views for the flask application.
 
 from datetime import datetime
 from flask import render_template, flash, redirect, request, session, url_for
-from werkzeug.urls import url_parse
+from urllib.parse import urlparse as url_parse
 from config import Config
 from FlaskWebProject import app, db
 from FlaskWebProject.forms import LoginForm, PostForm
